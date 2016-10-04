@@ -1,3 +1,4 @@
+/* eslint-disable camelcase, max-len */
 'use strict';
 exports.seed = function(knex) {
   // Deletes ALL existing entries
