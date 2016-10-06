@@ -30,13 +30,14 @@ router.post('/users', (req, res, next) => {
   }
 
   knex('users')
+    .select(knex.raw('1=1'))
     .where('email', email)
     .then((match) => {
       if (match.length !== 0) {
-        return next(boom.create(400, 'Email already exists'));
+        throw boom.create(400, 'Email already exists');
       }
-      
-      bcrypt.hash(password, 12)
+
+      return bcrypt.hash(password, 12)
         .then((hashedPassword) => {
           const insertUser = { firstName, lastName, email, hashedPassword };
 
@@ -52,6 +53,9 @@ router.post('/users', (req, res, next) => {
         .catch((err) => {
           next(err);
         });
+    })
+    .catch((err) => {
+      next(err);
     });
 });
 
