@@ -137,7 +137,7 @@ router.patch('/books/:id', (req, res, next) => {
     });
 });
 
-router.delete('/books/:id', authoize, (req, res, next) => {
+router.delete('/books/:id', authorize, (req, res, next) => {
   if (isNaN(req.params.id)) {
     return next();
   }
