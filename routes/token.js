@@ -11,7 +11,7 @@ const { camelizeKeys, decamelizeKeys } = require('humps');
 const router = express.Router();
 
 const authorize = (req, res, next) => {
-  jwt.verify(req.cookies.accessToken, process.env.JWT_SECRET, (err, decoded) => {
+  jwt.verify(req.cookies.token, process.env.JWT_SECRET, (err, decoded) => {
     if (err) {
       req.verify = false;
     } else {
@@ -23,7 +23,7 @@ const authorize = (req, res, next) => {
 }
 // YOUR CODE HERE
 router.get('/token', authorize, (req, res, _next) => {
-  res.json(req.verify);
+  res.send(req.verify);
 });
 
 router.post('/token', (req, res, next) => {
@@ -58,7 +58,7 @@ router.post('/token', (req, res, next) => {
         expiresIn: '3h'
       });
 
-      res.cookie('accessToken', token, {
+      res.cookie('token', token, {
         httpOnly: true,
         secure: router.get('env') === 'production'
       });
@@ -75,7 +75,7 @@ router.post('/token', (req, res, next) => {
 
 router.delete('/token', (req, res, next) => {
   res.clearCookie('token');
-  res.sendStatus(200);
+  res.send(true);
 });
 
 module.exports = router;
