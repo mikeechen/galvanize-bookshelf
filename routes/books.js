@@ -144,7 +144,7 @@ router.delete('/books/:id', (req, res, next) => {
 
       book = camelizeKeys(row);
 
-      knex('books')
+      return knex('books')
         .where('id', req.params.id)
         .del();
     })
