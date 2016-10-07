@@ -20,7 +20,7 @@ const authorize = (req, res, next) => {
 
     next();
   });
-}
+};
 // YOUR CODE HERE
 router.get('/token', authorize, (req, res, _next) => {
   res.send(req.verify);
