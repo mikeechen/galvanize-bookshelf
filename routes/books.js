@@ -8,16 +8,6 @@ const boom = require('boom');
 // eslint-disable-next-line new-cap
 const router = express.Router();
 
-const authorize = (req, res, next) => {
-  jwt.verify(req.cookies.token, process.env.JWT_SECRET, (err, decoded) => {
-    if (err) {
-      return next(boom.create(401, 'Unauthorized'));
-    }
-
-    next();
-  });
-};
-
 router.get('/books', (_req, res, next) => {
   knex('books')
     .orderBy('title')
@@ -137,7 +127,7 @@ router.patch('/books/:id', (req, res, next) => {
     });
 });
 
-router.delete('/books/:id', authorize, (req, res, next) => {
+router.delete('/books/:id', (req, res, next) => {
   if (isNaN(req.params.id)) {
     return next();
   }
