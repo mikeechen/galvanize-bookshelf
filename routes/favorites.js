@@ -91,40 +91,39 @@ router.post('/favorites', authorize, (req, res, next) => {
 });
 
 router.delete('/favorites', authorize, (req, res, next) => {
-    const { userId } = req.token;
-    const { bookId } = req.body;
+  const { userId } = req.token;
+  const { bookId } = req.body;
 
-    if (isNaN(bookId)) {
-      return next(boom.create(400, 'Book ID must be an integer'));
-    }
+  if (isNaN(bookId)) {
+    return next(boom.create(400, 'Book ID must be an integer'));
+  }
 
-    let book;
+  let book;
 
-    knex('favorites')
-      .where('favorites.user_id', userId)
-      .where('favorites.book_id', bookId)
-      .first()
-      .then((row) => {
-        if (!row) {
-          throw boom.create(404, 'Favorite not found');
-        }
+  knex('favorites')
+    .where('favorites.user_id', userId)
+    .where('favorites.book_id', bookId)
+    .first()
+    .then((row) => {
+      if (!row) {
+        throw boom.create(404, 'Favorite not found');
+      }
 
-        book = camelizeKeys(row);
+      book = camelizeKeys(row);
 
-        return knex('favorites')
-          .where('favorites.user_id', userId)
-          .where('favorites.book_id', bookId)
-          .del();
-      })
-      .then(() => {
-        delete book.id;
+      return knex('favorites')
+        .where('favorites.user_id', userId)
+        .where('favorites.book_id', bookId)
+        .del();
+    })
+    .then(() => {
+      delete book.id;
 
-        res.send(book);
-      })
-      .catch((err) => {
-        next(err);
-      })
-
+      res.send(book);
+    })
+    .catch((err) => {
+      next(err);
+    });
 });
 
 module.exports = router;

@@ -5,22 +5,22 @@ const boom = require('boom');
 const knex = require('../knex');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt-as-promised');
-const { camelizeKeys, decamelizeKeys } = require('humps');
+const { camelizeKeys } = require('humps');
 
 // eslint-disable-next-line new-cap
 const router = express.Router();
 
 const authorize = (req, res, next) => {
-  jwt.verify(req.cookies.token, process.env.JWT_SECRET, (err, decoded) => {
+  jwt.verify(req.cookies.token, process.env.JWT_SECRET, (err, _decoded) => {
     if (err) {
       req.verify = false;
     } else {
       req.verify = true;
     }
-
     next();
   });
 };
+
 // YOUR CODE HERE
 router.get('/token', authorize, (req, res, _next) => {
   res.send(req.verify);
@@ -30,7 +30,7 @@ router.post('/token', (req, res, next) => {
   const { email, password } = req.body;
 
   if (!email || !email.trim()) {
-  return next(boom.create(400, 'Email must not be blank'));
+    return next(boom.create(400, 'Email must not be blank'));
   }
 
   if (!password || password.length < 8) {
@@ -54,7 +54,7 @@ router.post('/token', (req, res, next) => {
     .then(() => {
       delete user.hashedPassword;
 
-      const token = jwt.sign({userId: user.id}, process.env.JWT_SECRET, {
+      const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, {
         expiresIn: '3h'
       });
 
@@ -73,7 +73,7 @@ router.post('/token', (req, res, next) => {
     });
 });
 
-router.delete('/token', (req, res, next) => {
+router.delete('/token', (req, res, _next) => {
   res.clearCookie('token');
   res.send(true);
 });
