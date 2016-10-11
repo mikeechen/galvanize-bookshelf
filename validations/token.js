@@ -16,4 +16,4 @@ module.exports.post = {
       .trim()
       .min(8)
   }
-}
+};

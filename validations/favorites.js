@@ -10,4 +10,4 @@ module.exports.post = {
       .label('BookId')
       .required()
   }
-}
+};

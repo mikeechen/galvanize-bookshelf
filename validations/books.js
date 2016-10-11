@@ -29,7 +29,7 @@ module.exports.post = {
       .required()
       .trim(),
   }
-}
+};
 
 module.exports.patch = {
   params: {
@@ -60,4 +60,4 @@ module.exports.patch = {
       .label('CoverUrl')
       .trim(),
   }
-}
+};
