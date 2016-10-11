@@ -5,29 +5,15 @@ const boom = require('boom');
 const { camelizeKeys, decamelizeKeys } = require('humps');
 const knex = require('../knex');
 const bcrypt = require('bcrypt-as-promised');
+const ev = require('express-validation');
+const validations = require('../validations/users');
 
 // eslint-disable-next-line new-cap
 const router = express.Router();
 
 // YOUR CODE HERE
-router.post('/users', (req, res, next) => {
+router.post('/users', ev(validations.post), (req, res, next) => {
   const { firstName, lastName, email, password } = camelizeKeys(req.body);
-
-  if (!password || password.length < 8) {
-    return next(boom.create(400, 'Password must be at least 8 characters long'));
-  }
-
-  if (!email || !email.trim()) {
-    return next(boom.create(400, 'Email must not be blank'));
-  }
-
-  if (!firstName || !firstName.trim()) {
-    return next(boom.create(400, 'First Name must not be blank'));
-  }
-
-  if (!lastName || !lastName.trim()) {
-    return next(boom.create(400, 'Last Name must not be blank'));
-  }
 
   knex('users')
     .select(knex.raw('1=1'))

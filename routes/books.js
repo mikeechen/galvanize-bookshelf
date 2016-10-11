@@ -4,6 +4,8 @@ const express = require('express');
 const knex = require('../knex');
 const { camelizeKeys, decamelizeKeys } = require('humps');
 const boom = require('boom');
+const ev = require('express-validation');
+const validations = require('../validations/books');
 
 // eslint-disable-next-line new-cap
 const router = express.Router();
@@ -41,29 +43,8 @@ router.get('/books/:id', (req, res, next) => {
     });
 });
 
-router.post('/books', (req, res, next) => {
+router.post('/books', ev(validations.post), (req, res, next) => {
   const { title, author, genre, description, coverUrl } = req.body;
-
-  if (!title || !title.trim()) {
-    return next(boom.create(400, 'Title must not be blank'));
-  }
-
-  if (!author || !author.trim()) {
-    return next(boom.create(400, 'Author must not be blank'));
-  }
-
-  if (!genre || !genre.trim()) {
-    return next(boom.create(400, 'Genre must not be blank'));
-  }
-
-  if (!description || !description.trim()) {
-    return next(boom.create(400, 'Description must not be blank'));
-  }
-
-  if (!coverUrl || !coverUrl.trim()) {
-    return next(boom.create(400, 'Cover URL must not be blank'));
-  }
-
   const bookinsert = { title, author, genre, description, coverUrl };
 
   knex('books')
@@ -78,11 +59,7 @@ router.post('/books', (req, res, next) => {
     });
 });
 
-router.patch('/books/:id', (req, res, next) => {
-  if (isNaN(req.params.id)) {
-    return next();
-  }
-
+router.patch('/books/:id', ev(validations.patch), (req, res, next) => {
   knex('books')
     .where('id', req.params.id)
     .first()
@@ -91,27 +68,7 @@ router.patch('/books/:id', (req, res, next) => {
         throw boom.create(404, 'Not Found');
       }
       const { title, author, genre, description, coverUrl } = req.body;
-      const updatebook = {};
-
-      if (title && title.trim()) {
-        updatebook.title = title;
-      }
-
-      if (author && author.trim()) {
-        updatebook.author = author;
-      }
-
-      if (genre && genre.trim()) {
-        updatebook.genre = genre;
-      }
-
-      if (description && description.trim()) {
-        updatebook.description = description;
-      }
-
-      if (coverUrl && coverUrl.trim()) {
-        updatebook.coverUrl = coverUrl;
-      }
+      const updatebook = { title, author, genre, description, coverUrl };
 
       return knex('books')
         .update(decamelizeKeys(updatebook), '*')

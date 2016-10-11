@@ -5,6 +5,8 @@ const boom = require('boom');
 const knex = require('../knex');
 const jwt = require('jsonwebtoken');
 const { camelizeKeys, decamelizeKeys } = require('humps');
+const ev = require('express-validation');
+const validations = require('../validations/favorites');
 
 // eslint-disable-next-line new-cap
 const router = express.Router();
@@ -63,13 +65,9 @@ router.get('/favorites/check', authorize, (req, res, next) => {
     });
 });
 
-router.post('/favorites', authorize, (req, res, next) => {
+router.post('/favorites', authorize, ev(validations.post), (req, res, next) => {
   const { userId } = req.token;
   const { bookId } = req.body;
-
-  if (isNaN(bookId)) {
-    return next(boom.create(400, 'Book ID must be an integer'));
-  }
 
   knex('books')
     .where('id', bookId)

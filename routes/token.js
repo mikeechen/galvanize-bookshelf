@@ -6,6 +6,8 @@ const knex = require('../knex');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt-as-promised');
 const { camelizeKeys } = require('humps');
+const ev = require('express-validation');
+const validations = require('../validations/token');
 
 // eslint-disable-next-line new-cap
 const router = express.Router();
@@ -26,17 +28,8 @@ router.get('/token', authorize, (req, res, _next) => {
   res.send(req.verify);
 });
 
-router.post('/token', (req, res, next) => {
+router.post('/token', ev(validations.post), (req, res, next) => {
   const { email, password } = req.body;
-
-  if (!email || !email.trim()) {
-    return next(boom.create(400, 'Email must not be blank'));
-  }
-
-  if (!password || password.length < 8) {
-    return next(boom.create(400, 'Password must not be blank'));
-  }
-
   let user;
 
   knex('users')
