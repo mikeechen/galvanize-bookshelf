@@ -61,7 +61,7 @@ router.post('/books', ev(validations.post), (req, res, next) => {
 
 router.patch('/books/:id', ev(validations.patch), (req, res, next) => {
   knex('books')
-    .where('id', req.params.id)
+    .where('id', Number.parseInt(req.params.id))
     .first()
     .then((book) => {
       if (!book) {
